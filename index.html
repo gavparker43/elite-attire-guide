@@ -733,6 +733,80 @@ footer svg { opacity: 1; }
 }
 
 
+/* ─── CHECKLIST ─── */
+.checklist-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 8px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.12s;
+  user-select: none;
+}
+
+.checklist-item:hover {
+  background: var(--bg-white);
+}
+
+.checklist-cb {
+  display: none;
+}
+
+.checklist-box {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--border);
+  border-radius: 5px;
+  background: var(--bg-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.checklist-box::after {
+  content: '';
+  display: block;
+  width: 5px;
+  height: 9px;
+  border-right: 2px solid white;
+  border-bottom: 2px solid white;
+  transform: rotate(45deg) translate(-1px, -1px);
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+.checklist-cb:checked ~ .checklist-box {
+  background: var(--text);
+  border-color: var(--text);
+}
+
+.checklist-cb:checked ~ .checklist-box::after {
+  opacity: 1;
+}
+
+.checklist-cb:checked ~ .checklist-label {
+  opacity: 0.4;
+  text-decoration: line-through;
+  text-decoration-color: var(--text-muted);
+}
+
+.checklist-label {
+  font-size: 0.9rem;
+  color: var(--text);
+  transition: opacity 0.15s;
+  line-height: 1.4;
+}
+
 /* ─── VIDEO PLAYER ─── */
 .video-wrap {
   display: none;
@@ -881,6 +955,18 @@ window.addEventListener('DOMContentLoaded', function() {
   window.addEventListener('scroll', updateBtnPosition, {passive: true});
   window.addEventListener('resize', updateBtnPosition, {passive: true});
   updateBtnPosition();
+  // ── Checklist persistence ───────────────────────────────────────────────────
+  function initChecklist() {
+    document.querySelectorAll('.checklist-cb').forEach(function(cb) {
+      var key = cb.getAttribute('data-key');
+      if (localStorage.getItem(key) === 'true') cb.checked = true;
+      cb.addEventListener('change', function() {
+        localStorage.setItem(key, cb.checked);
+      });
+    });
+  }
+  initChecklist();
+
   var form = document.getElementById('assistance-form');
   if (form) {
     form.addEventListener('submit', function(e) {
@@ -965,6 +1051,9 @@ window.addEventListener('DOMContentLoaded', function() {
       <a class="nav-item" data-page="adding-product" onclick="navigate('adding-product')">Adding a Product</a>
       <a class="nav-item" data-page="creating-collection" onclick="navigate('creating-collection')">Creating a Collection</a>
       <a class="nav-item" data-page="adding-menu-items" onclick="navigate('adding-menu-items')">Adding Menu Items</a>
+      <a class="nav-item" data-page="managing-orders" onclick="navigate('managing-orders')">Managing Orders</a>
+      <a class="nav-item" data-page="shipping" onclick="navigate('shipping')">Managing Shipping</a>
+      <a class="nav-item" data-page="checklist" onclick="navigate('checklist')">Checklist</a>
 
       <div class="nav-divider"></div>
 
@@ -1836,9 +1925,426 @@ window.addEventListener('DOMContentLoaded', function() {
         </div>
       </div>
 
-      
+      <a class="next-page-nav" onclick="navigate('managing-orders')">
+        <div>
+          <div class="next-page-nav-label">Next</div>
+          <div class="next-page-nav-title">Managing Orders</div>
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="next-page-nav-arrow"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
 
-    </div>
+    </section>
+
+    <!-- PAGE: MANAGING ORDERS -->
+    <section class="page" id="managing-orders">
+      <h1>Managing Orders</h1>
+      <p class="page-subtitle">View, fulfil, and manage customer orders from your Shopify admin.</p>
+      <div class="page-divider"></div>
+
+      <p>Once your store is live, all customer purchases will appear in the Orders section. This is where you can view, fulfil, and manage any issues with orders.</p>
+
+      <div class="page-divider"></div>
+
+      <h2>Viewing Orders</h2>
+
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <div class="step-title">Click Orders</div>
+          <div class="step-body">Click <strong>Orders</strong> in the left-hand menu.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <div class="step-title">View Order List</div>
+          <div class="step-body">You will see a list of all orders, with their current status (e.g. <strong>Paid</strong>, <strong>Unfulfilled</strong>).</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <div class="step-title">Open an Order</div>
+          <div class="step-body">Click on an order to view full details, including products, customer information, and payment status.</div>
+        </div>
+      </div>
+
+      <div class="page-divider"></div>
+
+      <h2>Marking an Order as Fulfilled</h2>
+
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <div class="step-title">Open the Order</div>
+          <div class="step-body">Open the order you want to process.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <div class="step-title">Click Fulfil Items</div>
+          <div class="step-body">Click <strong>Fulfil items</strong>.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <div class="step-title">Confirm and Add Tracking</div>
+          <div class="step-body">Confirm the items being fulfilled and add tracking information if available.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">4</div>
+        <div class="step-content">
+          <div class="step-title">Complete Fulfilment</div>
+          <div class="step-body">Click <strong>Fulfil items</strong> to complete. The order will now be marked as fulfilled and the customer may be notified.</div>
+        </div>
+      </div>
+
+      <div class="page-divider"></div>
+
+      <h2>Refunds &amp; Cancellations</h2>
+
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <div class="step-title">Open the Order</div>
+          <div class="step-body">Open the order you want to update.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <div class="step-title">Click Refund</div>
+          <div class="step-body">Click <strong>Refund</strong>.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <div class="step-title">Select Items</div>
+          <div class="step-body">Choose the items to refund and adjust quantities if needed.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">4</div>
+        <div class="step-content">
+          <div class="step-title">Process Refund</div>
+          <div class="step-body">Confirm the refund amount and process the refund.</div>
+        </div>
+      </div>
+
+      <div class="page-divider"></div>
+
+      <h2>Cancelling an Order</h2>
+
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <div class="step-title">Open the Order</div>
+          <div class="step-body">Open the order.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <div class="step-title">Click More Actions</div>
+          <div class="step-body">Click <strong>More actions</strong> (or the options menu).</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <div class="step-title">Cancel the Order</div>
+          <div class="step-body">Select <strong>Cancel order</strong> and confirm.</div>
+        </div>
+      </div>
+
+      <a class="next-page-nav" onclick="navigate('shipping')">
+        <div>
+          <div class="next-page-nav-label">Next</div>
+          <div class="next-page-nav-title">Shipping</div>
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="next-page-nav-arrow"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </section>
+
+    <!-- PAGE: SHIPPING -->
+    <section class="page" id="shipping">
+      <h1>Shipping</h1>
+      <p class="page-subtitle">Control how customers are charged for delivery and where you ship to.</p>
+      <div class="page-divider"></div>
+
+      <p>Shipping settings control how much customers are charged for delivery and where you ship to. In Shopify, this is managed using Rates, Markets, and Shipping Profiles.</p>
+
+      <div class="callout">
+        <div class="callout-label">Key Terms</div>
+        <p><strong>Rates:</strong> The cost of shipping charged to the customer (e.g. £5 standard delivery, free shipping over £100)</p>
+        <p style="margin-top:8px;"><strong>Markets:</strong> The countries or regions you sell and ship to (e.g. UK, Europe, International)</p>
+        <p style="margin-top:8px;"><strong>Shipping Profiles:</strong> Groups of products that share the same shipping rules</p>
+      </div>
+
+      <div class="page-divider"></div>
+
+      <h2>Accessing Shipping Settings</h2>
+
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <div class="step-title">Go to Settings</div>
+          <div class="step-body">Go to <strong>Settings</strong> in the bottom left.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <div class="step-title">Click Shipping and Delivery</div>
+          <div class="step-body">Click <strong>Shipping and delivery</strong>.</div>
+        </div>
+      </div>
+
+      <div class="page-divider"></div>
+
+      <h2>Setting Shipping Rates</h2>
+
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <div class="step-title">Select a Profile</div>
+          <div class="step-body">Under Shipping, select the profile you want to edit.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <div class="step-title">Click Manage Rates</div>
+          <div class="step-body">Click <strong>Manage rates</strong>.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <div class="step-title">Choose a Shipping Zone</div>
+          <div class="step-body">Choose the shipping zone (e.g. <strong>United Kingdom</strong>).</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">4</div>
+        <div class="step-content">
+          <div class="step-title">Click Add Rate</div>
+          <div class="step-body">Click <strong>Add rate</strong>.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">5</div>
+        <div class="step-content">
+          <div class="step-title">Enter Rate Details</div>
+          <div class="step-body">
+            <p>Enter the following:</p>
+            <ul>
+              <li><strong>Rate name</strong> (e.g. Standard Shipping)</li>
+              <li><strong>Price</strong> (or set conditions like free shipping over a certain amount)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">6</div>
+        <div class="step-content">
+          <div class="step-title">Save</div>
+          <div class="step-body">Click <strong>Done</strong>, then <strong>Save</strong>.</div>
+        </div>
+      </div>
+
+      <div class="page-divider"></div>
+
+      <h2>Managing Markets (Shipping Regions)</h2>
+
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <div class="step-title">Go to Markets</div>
+          <div class="step-body">Go to <strong>Settings</strong> and click <strong>Markets</strong>.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <div class="step-title">View Existing Regions</div>
+          <div class="step-body">You will see existing regions (e.g. <strong>United Kingdom</strong>).</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <div class="step-title">Add a New Market</div>
+          <div class="step-body">To add a new market, click <strong>Add market</strong>.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">4</div>
+        <div class="step-content">
+          <div class="step-title">Select Countries</div>
+          <div class="step-body">Select the countries or regions you want to include.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">5</div>
+        <div class="step-content">
+          <div class="step-title">Save</div>
+          <div class="step-body">Save your changes. Note: shipping rates must also be set up for each market.</div>
+        </div>
+      </div>
+
+      <div class="page-divider"></div>
+
+      <h2>Using Shipping Profiles</h2>
+
+      <p>Shipping profiles allow you to apply different shipping rules to different products.</p>
+
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <div class="step-title">Go to Shipping and Delivery</div>
+          <div class="step-body">Go to <strong>Settings → Shipping and delivery</strong>.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <div class="step-title">Select or Create a Profile</div>
+          <div class="step-body">Under <strong>Shipping profiles</strong>, select an existing profile or click <strong>Create new profile</strong>.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <div class="step-title">Assign Products</div>
+          <div class="step-body">Assign products to this profile.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">4</div>
+        <div class="step-content">
+          <div class="step-title">Set Shipping Rates</div>
+          <div class="step-body">Set specific shipping rates for those products.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-number">5</div>
+        <div class="step-content">
+          <div class="step-title">Save</div>
+          <div class="step-body">Click <strong>Save</strong>.</div>
+        </div>
+      </div>
+
+      <a class="next-page-nav" onclick="navigate('checklist')">
+        <div>
+          <div class="next-page-nav-label">Next</div>
+          <div class="next-page-nav-title">Checklist</div>
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="next-page-nav-arrow"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+
+    </section>
+
+    <!-- PAGE: CHECKLIST -->
+    <section class="page" id="checklist">
+      <h1>Checklist</h1>
+      <p class="page-subtitle">Track your progress as you get your store set up and running.</p>
+      <div class="page-divider"></div>
+
+      <p>Use this checklist to work through the key tasks for managing your Elite Attire UK store. Tick each item off as you complete it — your progress is saved in your browser.</p>
+
+      <div class="page-divider"></div>
+
+      <h2>Getting Started</h2>
+      <div class="checklist-group">
+        <label class="checklist-item"><input type="checkbox" class="checklist-cb" data-key="cl-accept-owner"><span class="checklist-box"></span><span class="checklist-label">Accept store ownership invitation</span></label>
+        <label class="checklist-item"><input type="checkbox" class="checklist-cb" data-key="cl-billing"><span class="checklist-box"></span><span class="checklist-label">Set up billing and select a Shopify plan</span></label>
+        <label class="checklist-item"><input type="checkbox" class="checklist-cb" data-key="cl-payments"><span class="checklist-box"></span><span class="checklist-label">Configure payment methods (Shopify Payments / PayPal)</span></label>
+      </div>
+
+      <div class="page-divider"></div>
+
+      <h2>Products</h2>
+      <div class="checklist-group">
+        <label class="checklist-item"><input type="checkbox" class="checklist-cb" data-key="cl-first-product"><span class="checklist-box"></span><span class="checklist-label">Add your first product by duplicating an existing one</span></label>
+        <label class="checklist-item"><input type="checkbox" class="checklist-cb" data-key="cl-product-images"><span class="checklist-box"></span><span class="checklist-label">Add product images and reorder with hero image first</span></label>
+        <label class="checklist-item"><input type="checkbox" class="checklist-cb" data-key="cl-product-desc"><span class="checklist-box"></span><span class="checklist-label">Write a product description</span></label>
+        <label class="checklist-item"><input type="checkbox" class="checklist-cb" data-key="cl-variants"><span class="checklist-box"></span><span class="checklist-label">Set up size variants and add price and stock for each</span></label>
+        <label class="checklist-item"><input type="checkbox" class="checklist-cb" data-key="cl-metafields"><span class="checklist-box"></span><span class="checklist-label">Complete all metafields (Type, Gender, Condition, RRP)</span></label>
+        <label class="checklist-item"><input type="checkbox" class="checklist-cb" data-key="cl-hs-code"><span class="checklist-box"></span><span class="checklist-label">Add a Harmonized Code (HS Code) in the Shipping section</span></label>
+        <label class="checklist-item"><input type="checkbox" class="checklist-cb" data-key="cl-product-status"><span class="checklist-box"></span><span class="checklist-label">Set product status to Active when ready to go live</span></label>
+      </div>
+
+      <div class="page-divider"></div>
+
+      <h2>Collections</h2>
+      <div class="checklist-group">
+        <label class="checklist-item"><input type="checkbox" class="checklist-cb" data-key="cl-collection-create"><span class="checklist-box"></span><span class="checklist-label">Create any new Smart Collections needed</span></label>
+        <label class="checklist-item"><input type="checkbox" class="checklist-cb" data-key="cl-collection-rules"><span class="checklist-box"></span><span class="checklist-label">Set correct conditions so products populate automatically</span></label>
+        <label class="checklist-item"><input type="checkbox" class="checklist-cb" data-key="cl-collection-image"><span class="checklist-box"></span><span class="checklist-label">Add a collection image where required</span></label>
+      </div>
+
+      <div class="page-divider"></div>
+
+      <h2>Navigation</h2>
+      <div class="checklist-group">
+        <label class="checklist-item"><input type="checkbox" class="checklist-cb" data-key="cl-menu-review"><span class="checklist-box"></span><span class="checklist-label">Review the existing menu structure before making changes</span></label>
+        <label class="checklist-item"><input type="checkbox" class="checklist-cb" data-key="cl-menu-add"><span class="checklist-box"></span><span class="checklist-label">Add any new menu items at the correct level</span></label>
+        <label class="checklist-item"><input type="checkbox" class="checklist-cb" data-key="cl-menu-save"><span class="checklist-box"></span><span class="checklist-label">Save and check menu changes on the live website</span></label>
+      </div>
+
+      <div class="page-divider"></div>
+
+      <h2>Orders</h2>
+      <div class="checklist-group">
+        <label class="checklist-item"><input type="checkbox" class="checklist-cb" data-key="cl-orders-check"><span class="checklist-box"></span><span class="checklist-label">Check the Orders section regularly for new purchases</span></label>
+        <label class="checklist-item"><input type="checkbox" class="checklist-cb" data-key="cl-orders-fulfil"><span class="checklist-box"></span><span class="checklist-label">Fulfil orders promptly and add tracking information</span></label>
+        <label class="checklist-item"><input type="checkbox" class="checklist-cb" data-key="cl-orders-refunds"><span class="checklist-box"></span><span class="checklist-label">Process any refunds or cancellations as needed</span></label>
+      </div>
+
+      <div class="page-divider"></div>
+
+      <h2>Shipping</h2>
+      <div class="checklist-group">
+        <label class="checklist-item"><input type="checkbox" class="checklist-cb" data-key="cl-shipping-rates"><span class="checklist-box"></span><span class="checklist-label">Set up shipping rates for all required zones</span></label>
+        <label class="checklist-item"><input type="checkbox" class="checklist-cb" data-key="cl-shipping-markets"><span class="checklist-box"></span><span class="checklist-label">Configure markets for all countries you ship to</span></label>
+        <label class="checklist-item"><input type="checkbox" class="checklist-cb" data-key="cl-shipping-profiles"><span class="checklist-box"></span><span class="checklist-label">Review shipping profiles and assign products correctly</span></label>
+      </div>
+
+      <div class="callout" style="margin-top: 40px;">
+        <div class="callout-label">Need Help?</div>
+        <p>If you get stuck on any of these tasks, use the <strong>Need Assistance?</strong> button to send us a message and we'll help you get sorted.</p>
+      </div>
+
+    </section>
 
   </main>
 </div>
