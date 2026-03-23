@@ -58,15 +58,10 @@ body {
   font-weight: 600;
   letter-spacing: 0.01em;
   color: white;
+  text-decoration: none;
+  cursor: pointer;
 }
 
-.topbar-version {
-  font-size: 0.7rem;
-  font-weight: 400;
-  color: rgba(255,255,255,0.35);
-  letter-spacing: 0.05em;
-  margin-left: auto;
-}
 
 /* ─── LAYOUT ─── */
 .layout {
@@ -171,14 +166,7 @@ body {
   justify-content: center;
 }
 
-.sidebar-version {
-  font-size: 0.65rem;
-  color: var(--text-muted);
-  letter-spacing: 0.08em;
-  text-align: center;
-  padding-top: 2px;
-  opacity: 0.6;
-}
+
 
 /* ─── MAIN CONTENT ─── */
 .main {
@@ -745,6 +733,37 @@ footer svg { opacity: 1; }
 }
 
 
+/* ─── VIDEO PLAYER ─── */
+.video-wrap {
+  display: none;
+  margin: 28px 0 32px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #000;
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--border);
+}
+
+.video-wrap iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+.video-label {
+  display: none;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
 /* ─── PAGE VISIBILITY (JS controlled) ─── */
 .page { display: none; }
 
@@ -795,18 +814,44 @@ function closeSidebar() {
   document.body.classList.remove('menu-open');
 }
 function showSection(id) {
-  // Hide all, show target
-  document.querySelectorAll('.page').forEach(function(p) { p.style.display = 'none'; });
+  var current = document.querySelector('.page[style*="block"]');
   var target = document.getElementById(id);
-  if (target) { target.style.display = 'block'; }
-  // Update nav active state
+  if (!target || target === current) return;
+
+  // Update nav active state immediately
   document.querySelectorAll('.nav-item').forEach(function(n) {
     n.classList.toggle('active', n.getAttribute('data-page') === id);
   });
+
   // Scroll to top
   document.querySelector('.main').scrollTo({top: 0});
   window.scrollTo({top: 0});
   closeSidebar();
+
+  if (current) {
+    // Fade out current, then fade in next
+    current.style.transition = 'opacity 0.18s ease';
+    current.style.opacity = '0';
+    setTimeout(function() {
+      current.style.display = 'none';
+      current.style.opacity = '';
+      current.style.transition = '';
+      target.style.display = 'block';
+      target.style.opacity = '0';
+      target.style.transition = 'opacity 0.22s ease';
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          target.style.opacity = '1';
+          setTimeout(function() {
+            target.style.opacity = '';
+            target.style.transition = '';
+          }, 220);
+        });
+      });
+    }, 180);
+  } else {
+    target.style.display = 'block';
+  }
 }
 
 function navigate(id) {
@@ -896,8 +941,7 @@ window.addEventListener('DOMContentLoaded', function() {
   <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle navigation">
     <span></span><span></span><span></span>
   </button>
-  <span class="topbar-title">Elite Attire | Ecommerce Website User Guide</span>
-  <span class="topbar-version">v 1.0</span>
+  <a href="#" onclick="navigate('intro')" class="topbar-title">Elite Attire | Ecommerce Website User Guide</a>
 </div>
 
 <div class="sidebar-overlay" onclick="closeSidebar()"></div>
@@ -921,6 +965,8 @@ window.addEventListener('DOMContentLoaded', function() {
       <a class="nav-item" data-page="adding-product" onclick="navigate('adding-product')">Adding a Product</a>
       <a class="nav-item" data-page="creating-collection" onclick="navigate('creating-collection')">Creating a Collection</a>
       <a class="nav-item" data-page="adding-menu-items" onclick="navigate('adding-menu-items')">Adding Menu Items</a>
+
+      <div class="nav-divider"></div>
 
     </div>
     <div class="sidebar-footer">
@@ -1408,6 +1454,11 @@ window.addEventListener('DOMContentLoaded', function() {
       <p class="page-subtitle">How to add new products to your Elite Attire UK store.</p>
       <div class="page-divider"></div>
 
+      <div class="video-label">Video Tutorial</div>
+      <div class="video-wrap">
+        <iframe src="https://player.vimeo.com/video/76979871?color=0a0a0a&title=0&byline=0&portrait=0" title="Adding a Product" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+
       <p>Adding a new product to your Elite Attire UK store is straightforward when following best practice. To keep your workflow consistent, we recommend starting by duplicating a similar existing product and updating the necessary fields.</p>
 
       <div class="page-divider"></div>
@@ -1589,6 +1640,11 @@ window.addEventListener('DOMContentLoaded', function() {
       <p class="page-subtitle">How to set up a new Smart Collection on your store.</p>
       <div class="page-divider"></div>
 
+      <div class="video-label">Video Tutorial</div>
+      <div class="video-wrap">
+        <iframe src="https://player.vimeo.com/video/76979871?color=0a0a0a&title=0&byline=0&portrait=0" title="Creating a Collection" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+
       <p>Your store is set up predominantly using <strong>Smart Collections</strong> rather than manual ones.</p>
       <p>A smart collection automatically pulls in products based on rules you define, such as product type, tags, or designer. This means you don't need to manually add products to collections.</p>
 
@@ -1679,6 +1735,11 @@ window.addEventListener('DOMContentLoaded', function() {
 <h1>Adding Menu Items</h1>
       <p class="page-subtitle">How to update and structure your website navigation.</p>
       <div class="page-divider"></div>
+
+      <div class="video-label">Video Tutorial</div>
+      <div class="video-wrap">
+        <iframe src="https://player.vimeo.com/video/76979871?color=0a0a0a&title=0&byline=0&portrait=0" title="Adding Menu Items" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
 
       <p>Your website navigation uses a mega menu structure, which is organised across three levels. Understanding this structure is important before making any changes.</p>
 
